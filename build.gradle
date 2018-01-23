@@ -1,23 +1,19 @@
 apply plugin: 'java'
+apply plugin: 'distribution'
 
 group='com.percussion'
 version='7.0.0'
-
-configurations {
-    deploy
-}
-
-sourceSets {
-    deploy {}
-}
 
 repositories {
 
     flatDir {
 
-        dirs "${System.getenv('RHYTHMYX_HOME')}/jetty/base/webapps/Rhythmyx/WEB-INF/lib"
-        dirs "${System.getenv('RHYTHMYX_HOME')}/jetty/base/webapps/RxServices/WEB-INF/lib"
-        dirs "${System.getenv('RHYTHMYX_HOME')}/jetty/defaults/lib/perc"
+        def rhythmyxHome = System.getenv('RHYTHMYX_HOME')
+
+        dirs "${rhythmyxHome}/jetty/base/webapps/Rhythmyx/WEB-INF/lib"
+        dirs "${rhythmyxHome}/jetty/base/webapps/RxServices/WEB-INF/lib"
+        dirs "${rhythmyxHome}/jetty/defaults/lib/perc"
+        dirs "${rhythmyxHome}/jetty/defaults/lib/perc-logging"
         dirs "lib"
     }
 
@@ -42,31 +38,6 @@ dependencies {
     compile name: 'rxservices'
     compile name: 'rxutils'
     compile name: 'rxbusiness'
-
-    deployCompile name: 'rxclient'
-    deployCompile name: 'rxserver'
-    deployCompile name: 'rxbusiness'
-    deployCompile name: 'rxutils'
-    deployCompile name: 'commons-lang-2.4'
-    deployCompile name: 'commons-logging-1.1.1'
-    deployCompile name: 'rxservices'
-    deployCompile name: 'jcr-1.0'
-    deployCompile name: 'servlet'
-    deployCompile name: 'commons-httpclient-3.1'
-    deployCompile name: 'commons-collections-3.2.2'
-    deployCompile name: 'commons-jexl-1.1.1-patched'
-}
-
-task copyFopAndJexlToServer(type: Copy) {
-    fileMode = 0750
-    from('lib') {
-        include "commons-jexl-1.1.1-patched.jar"
-    }
-    from findJar('fop')
-    from findJar('avalon-framework')
-    from findJar('xmlgraphics')
-    from findJar('batik')
-    into "${System.getenv('RHYTHMYX_HOME')}/jetty/defaults/lib/perc"
 }
 
 def findJar(String prefix) {
@@ -75,35 +46,46 @@ def findJar(String prefix) {
     }
 }
 
-task deploySamples(type: Copy) {
-    fileMode = 0750
-    from('Samples') {
-        include '**/*.xsl'
-        include '**/*.jpg'
-        include '**/*.png'
+distributions {
+    main {
+        contents {
+            into('fop_and_avalon_libs') {
+                fileMode = 0750
+                from('lib') {
+                    include "commons-jexl-1.1.1-patched.jar"
+                }
+                from findJar('fop')
+                from findJar('avalon-framework')
+                from findJar('xmlgraphics')
+                from findJar('batik')
+            }
+            from('rxconfig') {
+                fileMode = 0750
+                into 'rxconfig'
+            }
+            from('Samples') {
+                fileMode = 0750
+                into 'Samples'
+            }
+            from('img') {
+                fileMode = 0750
+                into 'img'
+            }
+            into('.') {
+                fileMode = 0750
+                from "build/libs/${rootProject.name}-${version}.jar"
+                from 'README.md'
+                from 'README.html'
+                from 'install.gradle'
+                from 'Extensions.xml'
+                from 'gradlew'
+                from 'gradlew.bat'
+                rename 'install.gradle', 'build.gradle'
+            }
+            from('gradle') {
+                fileMode = 0750
+                into 'gradle'
+            }
+        }
     }
-    into "${System.getenv('RHYTHMYX_HOME')}/rx_resources"
 }
-
-task installExtensions(type: JavaExec, dependsOn: 'jar') {
-    classpath = sourceSets.deploy.runtimeClasspath
-    main = 'com.percussion.util.PSExtensionInstallTool'
-    args System.getenv('RHYTHMYX_HOME'), '.'
-}
-
-task installJars(type: Copy) {
-    from "build/libs/${rootProject.name}-${version}.jar"
-    into "${System.getenv('RHYTHMYX_HOME')}/jetty/base/webapps/Rhythmyx/WEB-INF/lib"
-}
-
-task cleanConfig(type: Delete) {
-    delete "${System.getenv('RHYTHMYX_HOME')}/rxconfig/Server/fop.config"
-}
-
-task installConfig(type: Copy, dependsOn: cleanConfig) {
-    from "rxconfig"
-    into "${System.getenv('RHYTHMYX_HOME')}/rxconfig"
-}
-
-task deployServer(dependsOn: ['installJars', 'installConfig'])
-task install(dependsOn: ['copyFopAndJexlToServer', 'installExtensions', 'deployServer'])

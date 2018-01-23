@@ -24,20 +24,38 @@
 
 <h2 id="getting_started">Getting started</h2>
 
+<h3 id="building_the_source">Building the source</h3>
+
 <p>Before you start:</p>
 
 <ul>
 <li>The <code>JAVA_HOME</code> and <code>RHYTHMYX_HOME</code> environment variables must be set.</li>
 <li><code>RHYTHMYX_HOME</code> should point to the root of the Rhythmyx installation on your server.</li>
+<li><code>JAVA_HOME</code> should point to the installation directory of the JDK.</li>
 </ul>
-
-<h3 id="installation">Installation</h3>
-
-<p><em>Note: Version 7.+ is installed into the jetty web applcation server included with Rhythmyx. JBOSS is no longer supported.</em></p>
 
 <p>Clone the project repository:</p>
 
 <p><code>git clone git@github.com:percussion/PSOPDFGenerator.git</code></p>
+
+<p>To create a new distribution, run the following command:</p>
+
+<ul>
+<li><strong>Linux</strong>: <code>./gradlew assemble</code></li>
+<li><strong>Windows</strong>: <code>gradlew assemble</code></li>
+</ul>
+
+<h3 id="installation">Installation</h3>
+
+<p>Before you start:</p>
+
+<ul>
+<li>The <code>JAVA_HOME</code> and <code>RHYTHMYX_HOME</code> environment variables must be set.</li>
+<li><code>RHYTHMYX_HOME</code> should point to the root of the Rhythmyx installation on your server.</li>
+<li><code>JAVA_HOME</code> should point to the installation directory of the JRE.</li>
+</ul>
+
+<p><em>Note: Version 7.+ is installed into the jetty web applcation server included with Rhythmyx. JBOSS is no longer supported.</em></p>
 
 <p>Run the following command:</p>
 
@@ -73,14 +91,14 @@ set the output format.</p>
 
 <ul>
 <li><strong>Linux</strong>: <code>/Rhythmyx/eclipse/plugins/com.percussion.workbench_1.0.0/default-config/rxconfig/Workbench</code></li>
-<li><strong>Windows</strong>: <code>\Rhythmyx\eclipse\plugins\com.percussion.workbench_1.0.0\default-config\rxconfig\Workbench</code></li>
+<li><strong>Windows</strong>: <code>C:\Rhythmyx\eclipse\plugins\com.percussion.workbench_1.0.0\default-config\rxconfig\Workbench</code></li>
 </ul>
 
 <p>The <em>User</em> properties are found in the Eclipse Workspace folder:</p>
 
 <ul>
 <li><strong>Linux</strong>: <code>/Rhythmyx/rxconfig/Workbench/users/&lt;username&gt;/workspaces/workspace/.metadata/.plugins/com.percussion.workbench.ui/rxconfig/Workbench</code></li>
-<li><strong>Windows</strong>: <code>\Rhythmyx\rxconfig\Workbench\users\&lt;username&gt;\workspaces\workspace\.metadata\.plugins\com.percussion.workbench.ui\rxconfig\Workbench</code></li>
+<li><strong>Windows</strong>: <code>C:\Rhythmyx\rxconfig\Workbench\users\&lt;username&gt;\workspaces\workspace\.metadata\.plugins\com.percussion.workbench.ui\rxconfig\Workbench</code></li>
 </ul>
 
 <p>Shut down the Workbench if it is running and edit the files with your favorite text editor. In both files, add the following lines to the edit of the file:</p>

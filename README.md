@@ -24,27 +24,41 @@ This results in a PDF displaying on the screen.
 
 ## Getting started
 
+### Building the source
+
+*If you just want to install this plugin in Rhythmyx you can skip this section.*
+
 Before you start:
 
 - The `JAVA_HOME` and `RHYTHMYX_HOME` environment variables must be set.
 - `RHYTHMYX_HOME` should point to the root of the Rhythmyx installation on your server.
-
-### Installation
-
-*Note: Version 7.+ is installed into the jetty web applcation server included with Rhythmyx. JBOSS is no longer supported.*
+- `JAVA_HOME` should point to the installation directory of the JDK.
 
 Clone the project repository:
 
 `git clone git@github.com:percussion/PSOPDFGenerator.git`
+
+To create a new distribution, run the following command:
+
+- **Linux**: `./gradlew assemble`
+- **Windows**: `gradlew assemble`
+
+### Installation
+
+Before you start:
+
+- The `JAVA_HOME` and `RHYTHMYX_HOME` environment variables must be set.
+- `RHYTHMYX_HOME` should point to the root of the Rhythmyx installation on your server.
+- `JAVA_HOME` should point to the installation directory of the JRE.
+
+*Note: Version 7.+ is installed into the jetty web applcation server included with Rhythmyx. JBOSS is no longer supported.*
 
 Run the following command:
 
 - **Linux**: `./gradlew install`
 - **Windows**: `gradlew install`
 
-You will then be able to start your Rhythmyx server and add templates to your existing
-content types using the new FOP Assembler. Setting the MIME Type of the template will
-set the output format.
+You will then be able to start your Rhythmyx server and add templates to your existing content types using the new FOP Assembler. Setting the MIME Type of the template will set the output format.
 
 ### Adding MIME types to the Workbench
 
@@ -66,12 +80,12 @@ The standard Workbench installation does not include all of these types in the *
 There are 2 files in the Workbench installation that need to be modified. Both of them are named *mimemapwb.properties*. The *Default* properties are located in the Workbench plugin folder:
 
 - **Linux**: `/Rhythmyx/eclipse/plugins/com.percussion.workbench_1.0.0/default-config/rxconfig/Workbench`
-- **Windows**: `\Rhythmyx\eclipse\plugins\com.percussion.workbench_1.0.0\default-config\rxconfig\Workbench`
+- **Windows**: `C:\Rhythmyx\eclipse\plugins\com.percussion.workbench_1.0.0\default-config\rxconfig\Workbench`
 
 The *User* properties are found in the Eclipse Workspace folder:
 
 - **Linux**: `/Rhythmyx/rxconfig/Workbench/users/<username>/workspaces/workspace/.metadata/.plugins/com.percussion.workbench.ui/rxconfig/Workbench`
-- **Windows**: `\Rhythmyx\rxconfig\Workbench\users\<username>\workspaces\workspace\.metadata\.plugins\com.percussion.workbench.ui\rxconfig\Workbench`
+- **Windows**: `C:\Rhythmyx\rxconfig\Workbench\users\<username>\workspaces\workspace\.metadata\.plugins\com.percussion.workbench.ui\rxconfig\Workbench`
 
 Shut down the Workbench if it is running and edit the files with your favorite text editor. In both files, add the following lines to the edit of the file:
 

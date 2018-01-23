@@ -1,0 +1,75 @@
+apply plugin: 'java'
+
+def rhythmyxHome = System.getenv('RHYTHMYX_HOME')
+
+repositories {
+
+    flatDir {
+
+        dirs "${rhythmyxHome}/jetty/base/webapps/Rhythmyx/WEB-INF/lib"
+        dirs "${rhythmyxHome}/jetty/base/webapps/RxServices/WEB-INF/lib"
+        dirs "${rhythmyxHome}/jetty/defaults/lib/perc"
+        dirs "${rhythmyxHome}/jetty/defaults/lib/perc-logging"
+        dirs "lib"
+    }
+
+    jcenter()
+}
+
+dependencies {
+
+    compile name: 'rxclient'
+    compile name: 'rxserver'
+    compile name: 'rxbusiness'
+    compile name: 'rxutils'
+    compile name: 'commons-lang-2.4'
+    compile name: 'commons-logging-1.1.1'
+    compile name: 'rxservices'
+    compile name: 'jcr-1.0'
+    compile name: 'servlet'
+    compile name: 'commons-httpclient-3.1'
+    compile name: 'commons-collections-3.2.2'
+    compile name: 'commons-jexl-1.1.1-patched'
+}
+
+task copyFopAndJexlToServer(type: Copy) {
+    fileMode = 0750
+    from 'fop_and_avalon_libs'
+    into "${rhythmyxHome}/jetty/defaults/lib/perc"
+}
+
+task deploySamples(type: Copy) {
+    fileMode = 0750
+    from('Samples') {
+        include '**/*.xsl'
+        include '**/*.jpg'
+        include '**/*.png'
+    }
+    into "${rhythmyxHome}/rx_resources"
+}
+
+task installExtensions(type: JavaExec) {
+    classpath = configurations.runtimeClasspath
+    main = 'com.percussion.util.PSExtensionInstallTool'
+    args rhythmyxHome, '.'
+}
+
+task installJars(type: Copy) {
+    from '.'
+    include '*.jar'
+    into "${rhythmyxHome}/jetty/base/webapps/Rhythmyx/WEB-INF/lib"
+}
+
+task cleanConfig(type: Delete) {
+    delete "${rhythmyxHome}/rxconfig/Server/fop.config"
+}
+
+task installConfig(type: Copy, dependsOn: cleanConfig) {
+    from "rxconfig"
+    into "${rhythmyxHome}/rxconfig"
+}
+
+task deployServer(dependsOn: ['installJars', 'installConfig'])
+task install(dependsOn: ['copyFopAndJexlToServer', 'installExtensions', 'deployServer'])
+
+defaultTasks 'install'
